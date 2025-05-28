@@ -10,7 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: dependencies
-      run: sudo apt-get install -y build-essential libgtest-dev
+      run: |
+         sudo apt-get install -y build-essential libgtest-dev
+         sudo apt-get install -y g++ make
     - name: make
       run: make
     - name: chmod
