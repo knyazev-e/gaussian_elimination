@@ -7,7 +7,6 @@ L_FLAGS = -lgtest -lgtest_main -lpthread
 
 PROJECT_SOURCE = functions.cpp main.cpp
 TEST_SOURCE = functions.cpp test.cpp
-TEST_SOURCE = functions.cpp test.cpp
 PROJECT_OBJ = $(PROJECT_SOURCE:.cpp=.o)
 TEST_OBJ = $(TEST_SOURCE:.cpp=.o)
 

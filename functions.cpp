@@ -1,13 +1,15 @@
 #include "functions.h"
+#include <iostream>
 
 Eigen::MatrixXd readcsv(const std::string& filename) {
     std::ifstream file(filename);
-    size_t row_count = 0;
     std::string line;
+    std::getline(file, line);
+    size_t column_count = std::count(line.begin(), line.end(), ',') + 1;
+    size_t row_count = 1;
     while (std::getline(file, line)) {
         row_count++;
     }
-    size_t column_count = std::count(line.begin(), line.end(), ',') + 1;
     file.close();
 
     file.open(filename);
@@ -45,35 +47,35 @@ Eigen::VectorXd gauss_elimination(Eigen::MatrixXd& matrix) {
     int row_number = matrix.rows();
     int col_number = matrix.cols();
 
-    for (int i = 0; i < (row_number - 1); ++i) {
-
-        if (matrix(i, i) == 0) {
-            for (int k = i + 1; k < row_number; ++k) {
-                if (matrix(k, i) != 0) {
-                    matrix.row(i).swap(matrix.row(k));
+    // elimination
+    for (int c = 0; c < (row_number); ++c) {
+        if (matrix(c, c) == 0) {
+            for (int r = c + 1; r < row_number; ++r) {
+                if (matrix(r, c) != 0) {
+                    matrix.row(c).swap(matrix.row(r));
                     break;
                 }
             }
         }
 
-        if (matrix(i, i) == 0) {
+        if (matrix(c, c) == 0) {
             continue;
         }
 
-        for (int j = i + 1; j < row_number; ++j) {
-            matrix.row(j) = matrix(i, i)*matrix.row(j) - matrix(j, i)*matrix.row(i);
+        for (int r = c + 1; r < row_number; ++r) {
+            matrix.row(r) = matrix.row(r)*matrix(c, c) - matrix.row(c)*matrix(r, c);
         }
     }
 
-    //assuming the system passed in the file has a solution and therefore has n rows and (n+1) columns
+    // calculating the unknowns
     Eigen::VectorXd answer(row_number);
-    for (int i = row_number - 1; i >= 0; --i) {
-        for (int j = row_number - 1; j > i; --j) {
-            matrix(i, row_number) -= matrix(i, j)*answer(j);
-            matrix(i, j) = 0;
+    for (int r = row_number - 1; r >= 0; --r) {
+        for (int c = row_number - 1; c > r; --c) {
+            matrix(r, col_number - 1) -= matrix(r, c)*answer(c);
+            matrix(r, c) = 0;
         }
-        if (matrix(i,i) != 0) {
-            answer(i) = matrix(i, row_number)/matrix(i,i);
+        if (matrix(r,r) != 0) {
+            answer(r) = matrix(r, col_number - 1)/matrix(r,r);
         }
     }
 
